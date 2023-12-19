@@ -18,8 +18,7 @@ class Recipe(BaseModel):
     Recipe_Name:str
     Recipe_Image_link:str
     Recipe_nutritions_values:conlist(float, min_items=9, max_items=9)
-    RecipeIngredientParts:list[str]
-
+    RecipeIngredient:list[str]
     RecipeInstructions:list[str]
     CookTime:str
     PrepTime:str
