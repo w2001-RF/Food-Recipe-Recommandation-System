@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, conlist
-from typing import List, Optional
+from typing import Dict, List, Optional
 import pandas as pd
 from recipes_suggestion import generate_recipes_suggestions
 from repas_suggestions   import generate_repas_programme
@@ -19,8 +19,8 @@ class Recipe(BaseModel):
     Recipe_Name:str
     Recipe_Image_link:str
     Recipe_nutritions_values:conlist(float, min_items=9, max_items=9)
-    RecipeIngredient:list[str]
-    RecipeInstructions:list[str]
+    RecipeIngredient:List[str]
+    RecipeInstructions:List[str]
     CookTime:str
     PrepTime:str
     TotalTime:str
@@ -29,7 +29,7 @@ class Recipe(BaseModel):
 class RecipePredictionIn(BaseModel):
     nutrition_input:conlist(float, min_items=9, max_items=9)
     number_of_recommendations:int
-    ingredients:list[str] = []
+    ingredients:List[str] = []
 
 class RecipePredictionOut(BaseModel):
     Message: str
@@ -44,12 +44,18 @@ class RepasPredictionIn(BaseModel):
     number_of_meals:int
     weight_loss_plan:str
     nutrition_input:conlist(float, min_items=9, max_items=9)
-    ingredients:list[str] = []
+    ingredients:List[str] = []
     params:Optional[params]
+
+class NutritionProgramme(BaseModel):
+    BMI:str
+    BMICategory:str
+    CaloriesPerDay:str
+    Repas_Programme:Dict[str, List[Recipe]]
 
 class RepasPredictionOut(BaseModel):
     Message: str
-    output: Optional[List[Recipe]] = None
+    output: Optional[NutritionProgramme] = None
 
 @app.get("/")
 def home():
@@ -82,7 +88,7 @@ def predict_repas(prediction_input:RepasPredictionIn):
     gender = RepasPredictionIn.gender
     activity = RepasPredictionIn.activity
     number_of_meals = RepasPredictionIn.number_of_meals
-    
+
     if number_of_meals == 3:
         meals_calories_perc = {
             'breakfast':0.35,
