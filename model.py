@@ -42,3 +42,27 @@ def recommend(dataframe, _input, ingredients=[], params={'n_neighbors': 5, 'retu
     else:
         return None
 
+def output_recommended_recipes(dataframe):
+    if dataframe is not None:
+        output = dataframe.copy()
+        output = output.to_dict("records")
+        for recipe in output:
+            recipe['RecipeIngredientParts'] = extract_quoted_strings(
+                recipe['RecipeIngredientParts'])
+            recipe['RecipeInstructions'] = extract_quoted_strings(
+                recipe['RecipeInstructions'])
+    else:
+        output = None
+    return output
+
+def generate(dataframe, nutrition_input:list, ingredients:list=[], params:dict={'n_neighbors':5,'return_distance':False}):
+    recommendation_dataframe = recommend(
+        dataframe,
+        nutrition_input,
+        ingredients,
+        params.dict()
+    )
+
+    generated_recipes = output_recommended_recipes(recommendation_dataframe)
+
+    return generated_recipes.json()
