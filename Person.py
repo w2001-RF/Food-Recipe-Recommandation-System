@@ -33,6 +33,12 @@ class Person:
             bmr -= 161
         return bmr
 
+    def calories_calculator(self):
+        activites=['Little/no exercise', 'Light exercise', 'Moderate exercise (3-5 days/wk)', 'Very active (6-7 days/wk)', 'Extra active (very active & physical job)']
+        weights=[1.2,1.375,1.55,1.725,1.9]
+        weight = weights[activites.index(self.activity)]
+        maintain_calories = self.calculate_bmr()*weight
+        return maintain_calories
 
 
 
