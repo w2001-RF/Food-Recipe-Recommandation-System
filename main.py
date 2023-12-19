@@ -28,7 +28,7 @@ class Recipe(BaseModel):
 class RecipePredictionIn(BaseModel):
     nutrition_input:conlist(float, min_items=9, max_items=9)
     number_of_recommendations:int
-    ingredients:list[str]
+    ingredients:list[str] = []
 
 class RecipePredictionOut(BaseModel):
     Message: str
@@ -43,8 +43,12 @@ class RepasPredictionIn(BaseModel):
     number_of_meals:int
     weight_loss_plan:str
     nutrition_input:conlist(float, min_items=9, max_items=9)
-    ingredients:list[str]=[]
+    ingredients:list[str] = []
     params:Optional[params]
+
+class RepasPredictionOut(BaseModel):
+    Message: str
+    output: Optional[List[Recipe]] = None
 
 @app.get("/")
 def home():
