@@ -396,3 +396,12 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+#Data files
+recipes.csv
+recipes.parquet
+reviews.csv
+reviews.parquet
+
+#Jupyter Notebook
+food-recommendation-system.ipynb
