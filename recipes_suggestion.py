@@ -25,12 +25,17 @@ class Recommendation:
         if recommendations!=None:
             for recipe in recommendations:
                 recipe['image_link']=find_image(recipe['Name'])
+        else:
+            recommendations = None
         return recommendations
 
 
 def generate_recipes_suggestions(dataframe, nutrition_list,  number_of_recommendations, ingredients):
     recommendation=Recommendation(dataframe, nutrition_list, number_of_recommendations, ingredients)
     recommendations=recommendation.generate()
+
+    if recommendations!=None:
+        return None
 
     return [
         {
