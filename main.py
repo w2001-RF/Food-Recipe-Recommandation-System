@@ -34,6 +34,18 @@ class RecipePredictionOut(BaseModel):
     Message: str
     output: Optional[List[Recipe]] = None
 
+class RepasPredictionIn(BaseModel):
+    age:int
+    height:int
+    weight:int
+    gender:str
+    activity:str
+    number_of_meals:int
+    weight_loss_plan:str
+    nutrition_input:conlist(float, min_items=9, max_items=9)
+    ingredients:list[str]=[]
+    params:Optional[params]
+
 @app.get("/")
 def home():
     return {"Food Recommendation System": "OK"}
