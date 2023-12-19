@@ -37,22 +37,3 @@ class RecipePredictionOut(BaseModel):
 @app.get("/")
 def home():
     return {"Food Recommendation System": "OK"}
-
-@app.post("/Recipe_suggestions/",response_model=RecipePredictionOut)
-def predict_recipes(prediction_input:RecipePredictionIn):
-    output = generate_recipes_suggestions(
-        dataset,
-        RecipePredictionIn.nutrition_list,
-        RecipePredictionIn.number_of_recommendations,
-        RecipePredictionIn.ingredients)
-
-    if output is None:
-        return {
-            "Message": "Not found",
-            "output": None
-            }
-    else:
-        return {
-            "Message" : "Get recipes successfully",
-            "output": output
-            }
