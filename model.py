@@ -14,4 +14,10 @@ def build_pipeline(neigh, scaler, params):
     pipeline = Pipeline([('std_scaler', scaler), ('NN', transformer)])
     return pipeline
 
+def extract_ingredient_filtered_data(dataframe, ingredients):
+    extracted_data = dataframe.copy()
+    regex_string = ''.join(map(lambda x: f'(?=.*{x})', ingredients))
+    extracted_data = extracted_data[extracted_data['RecipeIngredientParts'].str.contains(
+        regex_string, regex=True, flags=re.IGNORECASE)]
+    return extracted_data
 
