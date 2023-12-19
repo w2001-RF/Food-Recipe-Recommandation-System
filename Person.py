@@ -8,5 +8,9 @@ class Person:
         self.meals_calories_perc=meals_calories_perc
         self.weight_loss_plan=weight_loss_plan
 
-    
+    def calculate_bmi(self,):
+        bmi=round(self.weight/((self.height/100)**2),2)
+        return bmi
+
+
 
