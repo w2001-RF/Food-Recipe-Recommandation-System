@@ -5,15 +5,18 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.neighbors import NearestNeighbors
 
+
 def scaling(dataframe):
     scaler = StandardScaler()
     prep_data = scaler.fit_transform(dataframe.iloc[:, 6:15].to_numpy())
     return prep_data, scaler
 
+
 def build_pipeline(neigh, scaler, params):
     transformer = FunctionTransformer(neigh.kneighbors, kw_args=params)
     pipeline = Pipeline([('std_scaler', scaler), ('NN', transformer)])
     return pipeline
+
 
 def extract_ingredient_filtered_data(dataframe, ingredients):
     extracted_data = dataframe.copy()
@@ -22,11 +25,13 @@ def extract_ingredient_filtered_data(dataframe, ingredients):
         regex_string, regex=True, flags=re.IGNORECASE)]
     return extracted_data
 
+
 def extract_quoted_strings(s):
     # Find all the strings inside double quotes
     strings = re.findall(r'"([^"]*)"', s)
     # Join the strings with 'and'
     return strings
+
 
 def recommend(dataframe, _input, ingredients=[], params={'n_neighbors': 5, 'return_distance': False}):
     extracted_data = extract_ingredient_filtered_data(dataframe, ingredients)
@@ -42,6 +47,7 @@ def recommend(dataframe, _input, ingredients=[], params={'n_neighbors': 5, 'retu
     else:
         return None
 
+
 def output_recommended_recipes(dataframe):
     if dataframe is not None:
         output = dataframe.copy()
@@ -55,7 +61,8 @@ def output_recommended_recipes(dataframe):
         output = None
     return output
 
-def generate(dataframe, nutrition_input:list, ingredients:list=[], params:dict={'n_neighbors':5,'return_distance':False}):
+
+def generate(dataframe, nutrition_input: list, ingredients: list = [], params: dict = {'n_neighbors': 5, 'return_distance': False}):
     recommendation_dataframe = recommend(
         dataframe,
         nutrition_input,
