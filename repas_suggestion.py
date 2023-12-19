@@ -44,6 +44,9 @@ def generate_repas_programme(dataframe, person):
     meals = person.meals_calories_perc
     recommendations = generate_recommendations(dataframe, person)
 
+    if recommendations is None:
+        return None
+
     return {
         "BMI": bmi_string,
         "BMICategory": category,

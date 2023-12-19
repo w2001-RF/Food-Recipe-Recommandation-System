@@ -34,7 +34,7 @@ def generate_recipes_suggestions(dataframe, nutrition_list,  number_of_recommend
     recommendation=Recommendation(dataframe, nutrition_list, number_of_recommendations, ingredients)
     recommendations=recommendation.generate()
 
-    if recommendations!=None:
+    if recommendations is None:
         return None
 
     return [
