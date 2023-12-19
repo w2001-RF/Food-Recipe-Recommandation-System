@@ -28,3 +28,29 @@ class Recommendation:
         return recommendations
 
 
+def generate_recipes_suggestions(dataframe, nutrition_list,  number_of_recommendations, ingredients):
+    recommendation=Recommendation(dataframe, nutrition_list, number_of_recommendations, ingredients)
+    recommendations=recommendation.generate()
+
+    return [
+        {
+            "Recipe_Name" : recipe["Name"],
+            "Recipe_Image_link": recipe["Image_link"],
+            "Recipe_nutritions_values": {
+                value:[recipe[value]]
+                for value in nutrition_values
+            },
+            "RecipesIngredients" : [
+                ingredient
+                for ingredient in recipe['RecipeIngredientParts']
+            ],
+            "RecipeInstructions" : [
+                instruction
+                for instruction in recipe['RecipeInstructions']
+            ],
+            "CookTime": f'{recipe["CookTime"]} min',
+            "PreparationTime": f'{recipe["PrepTime"]} min',
+            "TotalTime ": f'{recipe["TotalTime"]} min'
+        }
+        for recipe in recommendations
+    ]
