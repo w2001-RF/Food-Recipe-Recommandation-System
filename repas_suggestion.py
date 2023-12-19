@@ -37,3 +37,41 @@ def generate_recommendations(dataframe, person):
         for recipe in recommendation:
             recipe['image_link']=find_image(recipe['Name'])
     return recommendations
+
+def generate_repas_programme(dataframe, person):
+    bmi_string, category = person.get_bmi_string_and_category()
+    maintain_calories = person.calories_calculator()
+    meals = person.meals_calories_perc
+    recommendations = generate_recommendations(dataframe, person)
+
+    return {
+        "BMI": bmi_string,
+        "BMICategory": category,
+        "CaloriesPerDay": f'{round(maintain_calories * Weights[person.weight_loss_plan])} Calories/day',
+        "Repas_Programme" : {
+            meal_name : [
+                {
+                    "Recipe_Name" : recipe["Name"],
+                    "Recipe_Image_link": recipe["Image_link"],
+                    "Recipe_nutritions_values": {
+                        value:[recipe[value]]
+                        for value in nutritions_values
+                    },
+                    "RecipeIngredients" : [
+                        ingredient
+                        for ingredient in recipe['RecipeIngredientParts']
+                    ],
+                    "RecipeInstructions" : [
+                        instruction
+                        for instruction in recipe['RecipeInstructions']
+                    ],
+                    "CookTime": f'{recipe["CookTime"]} min',
+                    "PreparationTime": f'{recipe["PrepTime"]} min',
+                    "TotalTime ": f'{recipe["TotalTime"]} min'
+                }
+                for recipe in recommendation
+            ]
+            for meal_name, recommendation in zip(meals, recommendations)
+        }
+    }
+
