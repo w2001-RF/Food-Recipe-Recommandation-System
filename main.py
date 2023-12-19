@@ -19,8 +19,10 @@ class RecipePredictionIn(BaseModel):
     number_of_recommendations:int
     ingredients:list[str]
 
+class RecipePredictionOut(BaseModel):
+    Message: str
+    output: Optional[List[Recipe]] = None
+
 @app.get("/")
 def home():
     return {"Food Recommendation System": "OK"}
-
-
