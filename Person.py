@@ -25,7 +25,14 @@ class Person:
             category='Obesity'
         return bmi_string,category
 
-    
+    def calculate_bmr(self):
+        bmr = 10*self.weight + 6.25*self.height - 5*self.age
+        if self.gender=='Male':
+            bmr += 5
+        else:
+            bmr -= 161
+        return bmr
+
 
 
 
