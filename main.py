@@ -3,7 +3,7 @@ from pydantic import BaseModel, conlist
 from typing import Dict, List, Optional
 import pandas as pd
 from recipes_suggestion import generate_recipes_suggestions
-from repas_suggestions import generate_repas_programme
+from repas_suggestion import generate_repas_programme
 from Person import Person
 
 dataset = pd.read_csv('./Data/dataset.csv', compression='gzip')
