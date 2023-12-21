@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, conlist
 from typing import Dict, List, Optional
 import pandas as pd
@@ -46,22 +46,24 @@ def home():
 
 @app.post("/Recipe_suggestions/", response_model=RecipePredictionOut)
 def predict_recipes(prediction_input: RecipePredictionIn):
-    output = generate_recipes_suggestions(
-        dataset,
-        RecipePredictionIn.nutrition_input,
-        RecipePredictionIn.number_of_recommendations,
-        RecipePredictionIn.ingredients)
+    try:
+        output = generate_recipes_suggestions(
+            dataset,
+            prediction_input.nutrition_input,
+            prediction_input.number_of_recommendations,
+            prediction_input.ingredients
+        )
 
-    if output is None:
-        return {
-            "Message": "Not found",
-            "output": None
-        }
-    else:
+        if output is None:
+            raise HTTPException(status_code=404, detail="Not found")
+
         return {
             "Message": "Get recipes successfully",
             "output": output
         }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 class RepasPredictionIn(BaseModel):
@@ -158,8 +160,10 @@ def get_similar_recipe_endpoint(similar_recipe_input: SimilarRecipeInput):
         number = similar_recipe_input.number
         num_similar = similar_recipe_input.num_similar
 
-        # Call your existing function to get similar recipes
-        similar_recipes = get_similar_recipe(dataset, recipe_info.dict(), number, num_similar)
+        similar_recipes = get_similar_recipe(dataset,
+                                             recipe_info.dict(),
+                                             number,
+                                             num_similar)
 
         if similar_recipes is not None:
             return {
