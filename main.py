@@ -144,3 +144,8 @@ class SimilarRecipeInput(BaseModel):
     recipe_info: Recipe
     number: int
     num_similar: int
+
+
+class SimilarRecipeOutput(BaseModel):
+    Message: str
+    output: Optional[List[Recipe]] = None
