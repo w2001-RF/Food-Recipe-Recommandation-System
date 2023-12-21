@@ -5,6 +5,7 @@ import pandas as pd
 from recipes_suggestion import generate_recipes_suggestions
 from repas_suggestion import generate_repas_programme
 from Person import Person
+from model import get_similar_recipe, generate
 
 dataset = pd.read_csv('./Data/dataset.csv', compression='gzip')
 
@@ -149,3 +150,27 @@ class SimilarRecipeInput(BaseModel):
 class SimilarRecipeOutput(BaseModel):
     Message: str
     output: Optional[List[Recipe]] = None
+
+@app.post("/get_similar_recipe/", response_model=SimilarRecipeOutput)
+def get_similar_recipe_endpoint(similar_recipe_input: SimilarRecipeInput):
+    try:
+        recipe_info = similar_recipe_input.recipe_info
+        number = similar_recipe_input.number
+        num_similar = similar_recipe_input.num_similar
+
+        # Call your existing function to get similar recipes
+        similar_recipes = get_similar_recipe(dataset, recipe_info.dict(), number, num_similar)
+
+        if similar_recipes is not None:
+            return {
+                "Message": "Get similar recipes successfully",
+                "output": similar_recipes
+            }
+        else:
+            return {
+                "Message": "Not found",
+                "output": None
+            }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
