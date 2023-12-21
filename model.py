@@ -65,12 +65,12 @@ def generate(dataframe, nutrition_input: list, ingredients: list = [], params: d
         dataframe,
         nutrition_input,
         ingredients,
-        params.dict()
+        params
     )
 
     generated_recipes = output_recommended_recipes(recommendation_dataframe)
 
-    return generated_recipes.json()
+    return generated_recipes
 
 def get_similar_recipe(dataframe, recipe_info: dict, number: int, num_similar: int):
     nutrition_input = recipe_info['Recipe_nutritions_values']

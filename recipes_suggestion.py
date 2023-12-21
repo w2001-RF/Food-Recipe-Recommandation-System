@@ -34,7 +34,12 @@ class Recommendation:
 
 def generate_recipes_suggestions(dataframe, nutrition_list,  number_of_recommendations, ingredients):
     recommendation = Recommendation(
-        dataframe, nutrition_list, number_of_recommendations, ingredients)
+        dataframe,
+        nutrition_list,
+        number_of_recommendations,
+        ingredients
+    )
+
     recommendations = recommendation.generate()
 
     if recommendations is None:

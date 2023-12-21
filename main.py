@@ -46,24 +46,24 @@ def home():
 
 @app.post("/Recipe_suggestions/", response_model=RecipePredictionOut)
 def predict_recipes(prediction_input: RecipePredictionIn):
-    try:
-        output = generate_recipes_suggestions(
-            dataset,
-            prediction_input.nutrition_input,
-            prediction_input.number_of_recommendations,
-            prediction_input.ingredients
-        )
+    # try:
+    output = generate_recipes_suggestions(
+        dataset,
+        prediction_input.nutrition_input,
+        prediction_input.number_of_recommendations,
+        prediction_input.ingredients
+    )
 
-        if output is None:
-            raise HTTPException(status_code=404, detail="Not found")
+    if output is None:
+        raise HTTPException(status_code=404, detail="Not found")
 
-        return {
-            "Message": "Get recipes successfully",
-            "output": output
-        }
+    return {
+        "Message": "Get recipes successfully",
+        "output": output
+    }
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
 
 class RepasPredictionIn(BaseModel):
