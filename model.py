@@ -27,9 +27,7 @@ def extract_ingredient_filtered_data(dataframe, ingredients):
 
 
 def extract_quoted_strings(s):
-    # Find all the strings inside double quotes
     strings = re.findall(r'"([^"]*)"', s)
-    # Join the strings with 'and'
     return strings
 
 
@@ -73,3 +71,15 @@ def generate(dataframe, nutrition_input: list, ingredients: list = [], params: d
     generated_recipes = output_recommended_recipes(recommendation_dataframe)
 
     return generated_recipes.json()
+
+def get_similar_recipe(dataframe, recipe_info: dict, number: int, num_similar: int):
+    nutrition_input = recipe_info['Recipe_nutritions_values']
+    ingredients = recipe_info['RecipeIngredient']
+    params = {'n_neighbors': num_similar, 'return_distance': False}
+    similar_recipes_dataframe = recommend(dataframe, nutrition_input, ingredients, params)
+
+    if similar_recipes_dataframe is not None:
+        similar_recipes = output_recommended_recipes(similar_recipes_dataframe)
+        return similar_recipes[:number]
+    else:
+        return None

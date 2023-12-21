@@ -38,31 +38,6 @@ class RecipePredictionOut(BaseModel):
     output: Optional[List[Recipe]] = None
 
 
-class RepasPredictionIn(BaseModel):
-    age: int
-    height: int
-    weight: int
-    gender: str
-    activity: str
-    number_of_meals: int
-    weight_loss_plan: str
-    nutrition_input: conlist(float, min_items=9, max_items=9)
-    ingredients: List[str] = []
-    params: Optional[params]
-
-
-class NutritionProgramme(BaseModel):
-    BMI: str
-    BMICategory: str
-    CaloriesPerDay: str
-    Repas_Programme: Dict[str, List[Recipe]]
-
-
-class RepasPredictionOut(BaseModel):
-    Message: str
-    output: Optional[NutritionProgramme] = None
-
-
 @app.get("/")
 def home():
     return {"Food Recommendation System": "OK"}
@@ -72,7 +47,7 @@ def home():
 def predict_recipes(prediction_input: RecipePredictionIn):
     output = generate_recipes_suggestions(
         dataset,
-        RecipePredictionIn.nutrition_list,
+        RecipePredictionIn.nutrition_input,
         RecipePredictionIn.number_of_recommendations,
         RecipePredictionIn.ingredients)
 
@@ -87,6 +62,27 @@ def predict_recipes(prediction_input: RecipePredictionIn):
             "output": output
         }
 
+
+class RepasPredictionIn(BaseModel):
+    age: int
+    height: int
+    weight: int
+    gender: str
+    activity: str
+    number_of_meals: int
+    weight_loss_plan: str
+
+
+class NutritionProgramme(BaseModel):
+    BMI: str
+    BMICategory: str
+    CaloriesPerDay: str
+    Repas_Programme: Dict[str, List[Recipe]]
+
+
+class RepasPredictionOut(BaseModel):
+    Message: str
+    output: Optional[NutritionProgramme] = None
 
 @app.post("/Repas_suggestions/", response_model=RepasPredictionOut)
 def predict_repas(prediction_input: RepasPredictionIn):
