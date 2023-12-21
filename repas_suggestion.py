@@ -1,142 +1,85 @@
-from fastapi import FastAPI
-from pydantic import BaseModel, conlist
-from typing import Dict, List, Optional
-import pandas as pd
-from recipes_suggestion import generate_recipes_suggestions
-from repas_suggestion import generate_repas_programme
-from Person import Person
-
-dataset = pd.read_csv('./Data/dataset.csv', compression='gzip')
-
-app = FastAPI()
+from random import uniform as rnd
+from ImageFinder.ImageFinder import get_images_links as find_image
+from model import generate
 
 
-class params(BaseModel):
-    n_neighbors: int = 5
-    return_distance: bool = False
+Weights = {
+    "Maintain weight": 1,
+    "Mild weight loss": 0.9,
+    "Weight loss": 0.8,
+    "Extreme weight loss": 0.6
+}
+nutritions_values = [
+    'Calories', 'FatContent', 'SaturatedFatContent',
+    'CholesterolContent', 'SodiumContent', 'CarbohydrateContent',
+    'FiberContent', 'SugarContent', 'ProteinContent'
+]
+losses = ['-0 kg/week', '-0.25 kg/week', '-0.5 kg/week', '-1 kg/week']
 
 
-class Recipe(BaseModel):
-    Recipe_Name: str
-    Recipe_Image_link: str
-    Recipe_nutritions_values: conlist(float, min_items=9, max_items=9)
-    RecipeIngredient: List[str]
-    RecipeInstructions: List[str]
-    CookTime: str
-    PrepTime: str
-    TotalTime: str
+def generate_recommendations(dataframe, person):
+    total_calories = person.weight_loss * person.calories_calculator()
+    recommendations = []
+    for meal in person.meals_calories_perc:
+        meal_calories = person.meals_calories_perc[meal] * total_calories
+        if meal == 'breakfast':
+            recommended_nutrition = [meal_calories, rnd(10, 30), rnd(0, 4), rnd(
+                0, 30), rnd(0, 400), rnd(40, 75), rnd(4, 10), rnd(0, 10), rnd(30, 100)]
+        elif meal == 'launch':
+            recommended_nutrition = [meal_calories, rnd(20, 40), rnd(0, 4), rnd(
+                0, 30), rnd(0, 400), rnd(40, 75), rnd(4, 20), rnd(0, 10), rnd(50, 175)]
+        elif meal == 'dinner':
+            recommended_nutrition = [meal_calories, rnd(20, 40), rnd(0, 4), rnd(
+                0, 30), rnd(0, 400), rnd(40, 75), rnd(4, 20), rnd(0, 10), rnd(50, 175)]
+        else:
+            recommended_nutrition = [meal_calories, rnd(10, 30), rnd(0, 4), rnd(
+                0, 30), rnd(0, 400), rnd(40, 75), rnd(4, 10), rnd(0, 10), rnd(30, 100)]
+
+        recommended_recipes = generate(dataframe, recommended_nutrition)
+        recommendations.append(recommended_recipes)
+
+    for recommendation in recommendations:
+        for recipe in recommendation:
+            recipe['image_link'] = find_image(recipe['Name'])
+    return recommendations
 
 
-class RecipePredictionIn(BaseModel):
-    nutrition_input: conlist(float, min_items=9, max_items=9)
-    number_of_recommendations: int
-    ingredients: List[str] = []
+def generate_repas_programme(dataframe, person):
+    bmi_string, category = person.get_bmi_string_and_category()
+    maintain_calories = person.calories_calculator()
+    meals = person.meals_calories_perc
+    recommendations = generate_recommendations(dataframe, person)
 
+    if recommendations is None:
+        return None
 
-class RecipePredictionOut(BaseModel):
-    Message: str
-    output: Optional[List[Recipe]] = None
-
-
-@app.get("/")
-def home():
-    return {"Food Recommendation System": "OK"}
-
-
-@app.post("/Recipe_suggestions/", response_model=RecipePredictionOut)
-def predict_recipes(prediction_input: RecipePredictionIn):
-    output = generate_recipes_suggestions(
-        dataset,
-        prediction_input.nutrition_input,
-        prediction_input.number_of_recommendations,
-        prediction_input.ingredients
-    )
-
-    if output is None:
-        return {
-            "Message": "Not found",
-            "output": None
+    return {
+        "BMI": bmi_string,
+        "BMICategory": category,
+        "CaloriesPerDay": f'{round(maintain_calories * Weights[person.weight_loss_plan])} Calories/day',
+        "Repas_Programme": {
+            meal_name: [
+                {
+                    "Recipe_Name": recipe["Name"],
+                    "Recipe_Image_link": recipe["Image_link"],
+                    "Recipe_nutritions_values": {
+                        value: [recipe[value]]
+                        for value in nutritions_values
+                    },
+                    "RecipeIngredients": [
+                        ingredient
+                        for ingredient in recipe['RecipeIngredientParts']
+                    ],
+                    "RecipeInstructions": [
+                        instruction
+                        for instruction in recipe['RecipeInstructions']
+                    ],
+                    "CookTime": f'{recipe["CookTime"]} min',
+                    "PreparationTime": f'{recipe["PrepTime"]} min',
+                    "TotalTime ": f'{recipe["TotalTime"]} min'
+                }
+                for recipe in recommendation
+            ]
+            for meal_name, recommendation in zip(meals, recommendations)
         }
-    else:
-        return {
-            "Message": "Get recipes successfully",
-            "output": output
-        }
-
-
-class RepasPredictionIn(BaseModel):
-    age: int
-    height: int
-    weight: int
-    gender: str
-    activity: str
-    number_of_meals: int
-    weight_loss_plan: str
-
-
-class NutritionProgramme(BaseModel):
-    BMI: str
-    BMICategory: str
-    CaloriesPerDay: str
-    Repas_Programme: Dict[str, List[Recipe]]
-
-
-class RepasPredictionOut(BaseModel):
-    Message: str
-    output: Optional[NutritionProgramme] = None
-
-@app.post("/Repas_suggestions/", response_model=RepasPredictionOut)
-def predict_repas(prediction_input: RepasPredictionIn):
-    age = prediction_input.age
-    height = prediction_input.height
-    weight = prediction_input.weight
-    gender = prediction_input.gender
-    activity = prediction_input.activity
-    number_of_meals = prediction_input.number_of_meals
-
-    if number_of_meals == 3:
-        meals_calories_perc = {
-            'breakfast': 0.35,
-            'lunch': 0.40,
-            'dinner': 0.25
-        }
-    elif number_of_meals == 4:
-        meals_calories_perc = {
-            'breakfast': 0.30,
-            'morning snack': 0.05,
-            'lunch': 0.40,
-            'dinner': 0.25
-        }
-    else:
-        meals_calories_perc = {
-            'breakfast': 0.30,
-            'morning snack': 0.05,
-            'lunch': 0.40,
-            'afternoon snack': 0.05,
-            'dinner': 0.20
-        }
-
-    weight_loss_plan = prediction_input.weight_loss_plan
-
-    person = Person(
-        age,
-        height,
-        weight,
-        gender,
-        activity,
-        meals_calories_perc,
-        weight_loss_plan
-    )
-
-    output = generate_repas_programme(dataset, person)
-
-    if output is None:
-        return {
-            "Message": "Not found",
-            "output": None
-        }
-    else:
-        return {
-            "Message": "Get recipes successfully",
-            "output": output
-        }
+    }
