@@ -139,3 +139,8 @@ def predict_repas(prediction_input: RepasPredictionIn):
             "Message": "Get recipes successfully",
             "output": output
         }
+
+class SimilarRecipeInput(BaseModel):
+    recipe_info: Recipe
+    number: int
+    num_similar: int
