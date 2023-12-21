@@ -58,7 +58,7 @@ def generate_recipes_suggestions(dataframe, nutrition_list,  number_of_recommend
             ],
             "CookTime": f'{recipe["CookTime"]} min',
             "PrepTime": f'{recipe["PrepTime"]} min',
-            "TotalTime ": f'{recipe["TotalTime"]} min'
+            "TotalTime": f'{recipe["TotalTime"]} min'
         }
         for recipe in recommendations
     ]

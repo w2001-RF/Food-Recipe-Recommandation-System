@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, conlist
+from pydantic import BaseModel, conlist, ValidationError, validator
 from typing import Dict, List, Optional
 import pandas as pd
 from recipes_suggestion import generate_recipes_suggestions
