@@ -89,59 +89,59 @@ class RepasPredictionOut(BaseModel):
 
 @app.post("/Repas_suggestions/", response_model=RepasPredictionOut)
 def predict_repas(prediction_input: RepasPredictionIn):
-    age = RepasPredictionIn.age
-    height = RepasPredictionIn.height
-    weight = RepasPredictionIn.weight
-    gender = RepasPredictionIn.gender
-    activity = RepasPredictionIn.activity
-    number_of_meals = RepasPredictionIn.number_of_meals
+    try:
+        age = RepasPredictionIn.age
+        height = RepasPredictionIn.height
+        weight = RepasPredictionIn.weight
+        gender = RepasPredictionIn.gender
+        activity = RepasPredictionIn.activity
+        number_of_meals = RepasPredictionIn.number_of_meals
 
-    if number_of_meals == 3:
-        meals_calories_perc = {
-            'breakfast': 0.35,
-            'lunch': 0.40,
-            'dinner': 0.25
-        }
-    elif number_of_meals == 4:
-        meals_calories_perc = {
-            'breakfast': 0.30,
-            'morning snack': 0.05,
-            'lunch': 0.40,
-            'dinner': 0.25
-        }
-    else:
-        meals_calories_perc = {
-            'breakfast': 0.30,
-            'morning snack': 0.05,
-            'lunch': 0.40,
-            'afternoon snack': 0.05,
-            'dinner': 0.20
-        }
+        if number_of_meals == 3:
+            meals_calories_perc = {
+                'breakfast': 0.35,
+                'lunch': 0.40,
+                'dinner': 0.25
+            }
+        elif number_of_meals == 4:
+            meals_calories_perc = {
+                'breakfast': 0.30,
+                'morning snack': 0.05,
+                'lunch': 0.40,
+                'dinner': 0.25
+            }
+        else:
+            meals_calories_perc = {
+                'breakfast': 0.30,
+                'morning snack': 0.05,
+                'lunch': 0.40,
+                'afternoon snack': 0.05,
+                'dinner': 0.20
+            }
 
-    weight_loss_plan = RepasPredictionIn.weight_loss_plan
+        weight_loss_plan = RepasPredictionIn.weight_loss_plan
 
-    person = Person(
-        age,
-        height,
-        weight,
-        gender,
-        activity,
-        meals_calories_perc,
-        weight_loss_plan
-    )
+        person = Person(
+            age,
+            height,
+            weight,
+            gender,
+            activity,
+            meals_calories_perc,
+            weight_loss_plan
+        )
 
-    output = generate_repas_programme(dataset, person)
+        output = generate_repas_programme(dataset, person)
 
-    if output is None:
-        return {
-            "Message": "Not found",
-            "output": None
-        }
-    else:
-        return {
-            "Message": "Get recipes successfully",
-            "output": output
-        }
+        if output is None:
+             raise HTTPException(status_code=404, detail="Not found")
+        else:
+            return {
+                "Message": "Get recipes successfully",
+                "output": output
+            }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 class SimilarRecipeInput(BaseModel):
     recipe_info: Recipe
@@ -171,10 +171,8 @@ def get_similar_recipe_endpoint(similar_recipe_input: SimilarRecipeInput):
                 "output": similar_recipes
             }
         else:
-            return {
-                "Message": "Not found",
-                "output": None
-            }
+            raise HTTPException(status_code=404, detail="Not found")
+
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
