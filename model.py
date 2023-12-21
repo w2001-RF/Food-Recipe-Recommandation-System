@@ -4,6 +4,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.neighbors import NearestNeighbors
+from ImageFinder.ImageFinder import get_images_links as find_image
 
 
 def scaling(dataframe):
@@ -51,6 +52,7 @@ def output_recommended_recipes(dataframe):
         output = dataframe.copy()
         output = output.to_dict("records")
         for recipe in output:
+            recipe['Image_link'] = find_image(recipe['Name'])
             recipe['RecipeIngredientParts'] = extract_quoted_strings(
                 recipe['RecipeIngredientParts'])
             recipe['RecipeInstructions'] = extract_quoted_strings(
@@ -74,12 +76,12 @@ def generate(dataframe, nutrition_input: list, ingredients: list = [], params: d
 
 def get_similar_recipe(dataframe, recipe_info: dict, number: int, num_similar: int):
     nutrition_input = recipe_info['Recipe_nutritions_values']
-    ingredients = recipe_info['RecipeIngredient']
+    ingredients = recipe_info['RecipeIngredients']
     params = {'n_neighbors': num_similar, 'return_distance': False}
-    similar_recipes_dataframe = recommend(dataframe, nutrition_input, ingredients, params)
 
-    if similar_recipes_dataframe is not None:
-        similar_recipes = output_recommended_recipes(similar_recipes_dataframe)
+    similar_recipes = generate(dataframe, nutrition_input, ingredients, params)
+
+    if similar_recipes is not None:
         return similar_recipes[:number]
     else:
         return None

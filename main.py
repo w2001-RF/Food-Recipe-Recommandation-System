@@ -20,12 +20,25 @@ class params(BaseModel):
 class Recipe(BaseModel):
     Recipe_Name: str
     Recipe_Image_link: str
-    Recipe_nutritions_values: conlist(float, min_items=9, max_items=9)
-    RecipeIngredient: List[str]
+    Recipe_nutritions_values: Dict[str, float]
+    RecipeIngredients: List[str]
     RecipeInstructions: List[str]
     CookTime: str
     PrepTime: str
     TotalTime: str
+
+    @validator('Recipe_nutritions_values')
+    def validate_nutrition_keys(cls, value):
+        required_keys = [
+            'Calories', 'FatContent', 'SaturatedFatContent',
+            'CholesterolContent', 'SodiumContent', 'CarbohydrateContent',
+            'FiberContent', 'SugarContent', 'ProteinContent'
+        ]
+
+        if set(value.keys()) != set(required_keys):
+            raise ValidationError("Invalid nutrition keys")
+
+        return value
 
 
 class RecipePredictionIn(BaseModel):

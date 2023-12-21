@@ -38,9 +38,6 @@ def generate_recommendations(dataframe, person):
         recommended_recipes = generate(dataframe, recommended_nutrition)
         recommendations.append(recommended_recipes)
 
-    for recommendation in recommendations:
-        for recipe in recommendation:
-            recipe['image_link'] = find_image(recipe['Name'])
     return recommendations
 
 
@@ -63,7 +60,7 @@ def generate_repas_programme(dataframe, person):
                     "Recipe_Name": recipe["Name"],
                     "Recipe_Image_link": recipe["Image_link"],
                     "Recipe_nutritions_values": {
-                        value: [recipe[value]]
+                        value: recipe[value]
                         for value in nutritions_values
                     },
                     "RecipeIngredients": [
@@ -75,8 +72,8 @@ def generate_repas_programme(dataframe, person):
                         for instruction in recipe['RecipeInstructions']
                     ],
                     "CookTime": f'{recipe["CookTime"]} min',
-                    "PreparationTime": f'{recipe["PrepTime"]} min',
-                    "TotalTime ": f'{recipe["TotalTime"]} min'
+                    "PrepTime": f'{recipe["PrepTime"]} min',
+                    "TotalTime": f'{recipe["TotalTime"]} min'
                 }
                 for recipe in recommendation
             ]
