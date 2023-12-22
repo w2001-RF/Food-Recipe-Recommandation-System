@@ -67,6 +67,10 @@ def generate_repas_programme(dataframe, person):
                         ingredient
                         for ingredient in recipe['RecipeIngredientParts']
                     ],
+                    "RecipeIngredientQuantities": [
+                        quantity
+                        for quantity in recipe['RecipeIngredientQuantities']
+                    ],
                     "RecipeInstructions": [
                         instruction
                         for instruction in recipe['RecipeInstructions']

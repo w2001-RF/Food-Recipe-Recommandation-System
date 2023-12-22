@@ -52,6 +52,10 @@ def generate_recipes_suggestions(dataframe, nutrition_list,  number_of_recommend
                 ingredient
                 for ingredient in recipe['RecipeIngredientParts']
             ],
+            "RecipeIngredientQuantities": [
+                quantity
+                for quantity in recipe['RecipeIngredientQuantities']
+            ],
             "RecipeInstructions": [
                 instruction
                 for instruction in recipe['RecipeInstructions']

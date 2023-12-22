@@ -22,6 +22,7 @@ class Recipe(BaseModel):
     Recipe_Image_link: str
     Recipe_nutritions_values: Dict[str, float]
     RecipeIngredients: List[str]
+    RecipeIngredientQuantities: List[str]
     RecipeInstructions: List[str]
     CookTime: str
     PrepTime: str
