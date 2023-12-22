@@ -32,7 +32,7 @@ def extract_quoted_strings(s):
     return strings
 
 
-def recommend(dataframe, _input, ingredients=[], params={'n_neighbors': 5, 'return_distance': False}):
+def recommend(dataframe, _input: list, ingredients=[], params={'n_neighbors': 5, 'return_distance': False}):
     extracted_data = extract_ingredient_filtered_data(dataframe, ingredients)
 
     if extracted_data.shape[0] >= params['n_neighbors']:
@@ -73,15 +73,3 @@ def generate(dataframe, nutrition_input: list, ingredients: list = [], params: d
     generated_recipes = output_recommended_recipes(recommendation_dataframe)
 
     return generated_recipes
-
-def get_similar_recipe(dataframe, recipe_info: dict, number: int, num_similar: int):
-    nutrition_input = recipe_info['Recipe_nutritions_values']
-    ingredients = recipe_info['RecipeIngredients']
-    params = {'n_neighbors': num_similar, 'return_distance': False}
-
-    similar_recipes = generate(dataframe, nutrition_input, ingredients, params)
-
-    if similar_recipes is not None:
-        return similar_recipes[:number]
-    else:
-        return None

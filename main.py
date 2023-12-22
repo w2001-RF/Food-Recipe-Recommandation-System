@@ -157,35 +157,11 @@ def predict_repas(prediction_input: RepasPredictionIn):
         raise HTTPException(status_code=500, detail=str(e))
 
 class SimilarRecipeInput(BaseModel):
-    recipe_info: Recipe
-    number: int
+    recipe_nutritions_values: conlist(float, min_items=9, max_items=9)
+    recipe_ingredients: List[str] = []
     num_similar: int
 
 
 class SimilarRecipeOutput(BaseModel):
     Message: str
     output: Optional[List[Recipe]] = None
-
-@app.post("/get_similar_recipe/", response_model=SimilarRecipeOutput)
-def get_similar_recipe_endpoint(similar_recipe_input: SimilarRecipeInput):
-    try:
-        recipe_info = similar_recipe_input.recipe_info
-        number = similar_recipe_input.number
-        num_similar = similar_recipe_input.num_similar
-
-        similar_recipes = get_similar_recipe(dataset,
-                                             recipe_info.dict(),
-                                             number,
-                                             num_similar)
-
-        if similar_recipes is not None:
-            return {
-                "Message": "Get similar recipes successfully",
-                "output": similar_recipes
-            }
-        else:
-            raise HTTPException(status_code=404, detail="Not found")
-
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
