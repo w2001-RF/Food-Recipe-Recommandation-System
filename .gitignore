@@ -404,4 +404,5 @@ reviews.csv
 reviews.parquet
 
 #Jupyter Notebook
+.ipynb_checkpoints/food-recommendation-system-checkpoint.ipynb
 food-recommendation-system.ipynb

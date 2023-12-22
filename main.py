@@ -59,24 +59,24 @@ def home():
 
 @app.post("/Recipe_suggestions/", response_model=RecipePredictionOut)
 def predict_recipes(prediction_input: RecipePredictionIn):
-    # try:
-    output = generate_recipes_suggestions(
-        dataset,
-        prediction_input.nutrition_input,
-        prediction_input.number_of_recommendations,
-        prediction_input.ingredients
-    )
+    try:
+        output = generate_recipes_suggestions(
+            dataset,
+            prediction_input.nutrition_input,
+            prediction_input.number_of_recommendations,
+            prediction_input.ingredients
+        )
 
-    if output is None:
-        raise HTTPException(status_code=404, detail="Not found")
+        if output is None:
+            raise HTTPException(status_code=404, detail="Not found")
 
-    return {
-        "Message": "Get recipes successfully",
-        "output": output
-    }
+        return {
+            "Message": "Get recipes successfully",
+            "output": output
+        }
 
-    # except Exception as e:
-    #     raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 class RepasPredictionIn(BaseModel):
@@ -103,12 +103,12 @@ class RepasPredictionOut(BaseModel):
 @app.post("/Repas_suggestions/", response_model=RepasPredictionOut)
 def predict_repas(prediction_input: RepasPredictionIn):
     try:
-        age = RepasPredictionIn.age
-        height = RepasPredictionIn.height
-        weight = RepasPredictionIn.weight
-        gender = RepasPredictionIn.gender
-        activity = RepasPredictionIn.activity
-        number_of_meals = RepasPredictionIn.number_of_meals
+        age = prediction_input.age
+        height = prediction_input.height
+        weight = prediction_input.weight
+        gender = prediction_input.gender
+        activity = prediction_input.activity
+        number_of_meals = prediction_input.number_of_meals
 
         if number_of_meals == 3:
             meals_calories_perc = {
@@ -132,7 +132,7 @@ def predict_repas(prediction_input: RepasPredictionIn):
                 'dinner': 0.20
             }
 
-        weight_loss_plan = RepasPredictionIn.weight_loss_plan
+        weight_loss_plan = prediction_input.weight_loss_plan
 
         person = Person(
             age,

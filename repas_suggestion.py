@@ -18,7 +18,7 @@ losses = ['-0 kg/week', '-0.25 kg/week', '-0.5 kg/week', '-1 kg/week']
 
 
 def generate_recommendations(dataframe, person):
-    total_calories = person.weight_loss * person.calories_calculator()
+    total_calories = Weights[person.weight_loss_plan] * person.calories_calculator()
     recommendations = []
     for meal in person.meals_calories_perc:
         meal_calories = person.meals_calories_perc[meal] * total_calories
