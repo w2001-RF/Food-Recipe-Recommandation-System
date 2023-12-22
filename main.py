@@ -156,12 +156,3 @@ def predict_repas(prediction_input: RepasPredictionIn):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-class SimilarRecipeInput(BaseModel):
-    recipe_nutritions_values: conlist(float, min_items=9, max_items=9)
-    recipe_ingredients: List[str] = []
-    num_similar: int
-
-
-class SimilarRecipeOutput(BaseModel):
-    Message: str
-    output: Optional[List[Recipe]] = None
