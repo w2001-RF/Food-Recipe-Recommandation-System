@@ -5,7 +5,6 @@ import pandas as pd
 from recipes_suggestion import generate_recipes_suggestions
 from repas_suggestion import generate_repas_programme
 from Person import Person
-from model import get_similar_recipe, generate
 
 dataset = pd.read_csv('./Data/dataset.csv', compression='gzip')
 
@@ -18,11 +17,12 @@ class params(BaseModel):
 
 
 class Recipe(BaseModel):
+    Recipe_Id: int
     Recipe_Name: str
     Recipe_Image_link: str
     Recipe_nutritions_values: Dict[str, float]
     RecipeIngredients: List[str]
-    RecipeIngredientQuantities: List[str]
+    # RecipeIngredientQuantities: List[str]
     RecipeInstructions: List[str]
     CookTime: str
     PrepTime: str

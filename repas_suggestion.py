@@ -18,7 +18,8 @@ losses = ['-0 kg/week', '-0.25 kg/week', '-0.5 kg/week', '-1 kg/week']
 
 
 def generate_recommendations(dataframe, person):
-    total_calories = Weights[person.weight_loss_plan] * person.calories_calculator()
+    total_calories = Weights[person.weight_loss_plan] * \
+        person.calories_calculator()
     recommendations = []
     for meal in person.meals_calories_perc:
         meal_calories = person.meals_calories_perc[meal] * total_calories
@@ -57,6 +58,7 @@ def generate_repas_programme(dataframe, person):
         "Repas_Programme": {
             meal_name: [
                 {
+                    "Recipe_Id": recipe["RecipeId"],
                     "Recipe_Name": recipe["Name"],
                     "Recipe_Image_link": recipe["Image_link"],
                     "Recipe_nutritions_values": {
@@ -67,10 +69,10 @@ def generate_repas_programme(dataframe, person):
                         ingredient
                         for ingredient in recipe['RecipeIngredientParts']
                     ],
-                    "RecipeIngredientQuantities": [
-                        quantity
-                        for quantity in recipe['RecipeIngredientQuantities']
-                    ],
+                    # "RecipeIngredientQuantities": [
+                    #     quantity
+                    #     for quantity in recipe['RecipeIngredientQuantities']
+                    # ],
                     "RecipeInstructions": [
                         instruction
                         for instruction in recipe['RecipeInstructions']
