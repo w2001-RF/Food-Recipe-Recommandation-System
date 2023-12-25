@@ -10,7 +10,7 @@ nutrition_values = [
 def generate_recipes_suggestions(dataframe, nutrition_list,  number_of_recommendations, ingredients):
 
     params = {
-        'n_neighbors': self.nb_recommendations,
+        'n_neighbors': number_of_recommendations,
         'return_distance': False
     }
 
