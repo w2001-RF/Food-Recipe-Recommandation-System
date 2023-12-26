@@ -56,12 +56,14 @@ class RecipePredictionOut(BaseModel):
 @app.get("/")
 def home():
     return {"Food Recommendation System": "OK"}
-
+def generate_recipes_suggestions_background(dataset, nutrition_input, number_of_recommendations, ingredients):
+    return generate_recipes_suggestions(dataset, nutrition_input, number_of_recommendations, ingredients)
 
 @app.post("/Recipe_suggestions/", response_model=RecipePredictionOut)
-def predict_recipes(prediction_input: RecipePredictionIn):
-    try:
-        output = generate_recipes_suggestions(
+async def predict_recipes(prediction_input: RecipePredictionIn):
+    # try:
+    if True:
+        output = await generate_recipes_suggestions(
             dataset,
             prediction_input.nutrition_input,
             prediction_input.number_of_recommendations,
@@ -76,8 +78,31 @@ def predict_recipes(prediction_input: RecipePredictionIn):
             "output": output
         }
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
+
+# @app.post("/Recipe_suggestions/", response_model=RecipePredictionOut)
+# async def predict_recipes(prediction_input: RecipePredictionIn):
+#     # try:
+#     output = await run_blocking(
+#         generate_recipes_suggestions,
+#         dataset,
+#         prediction_input.nutrition_input,
+#         prediction_input.number_of_recommendations,
+#         prediction_input.ingredients
+#     )
+
+#     if output is None:
+#         raise HTTPException(status_code=404, detail="Not found")
+
+#     return {
+#         "Message": "Get recipes successfully",
+#         "output": output
+#     }
+
+#     # except Exception as e:
+#         # raise HTTPException(status_code=500, detail=str(e))
+
 
 
 class RepasPredictionIn(BaseModel):

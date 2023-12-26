@@ -19,7 +19,7 @@ def build_pipeline(neigh, scaler, params):
     return pipeline
 
 
-def extract_ingredient_filtered_data(dataframe, ingredients):
+async def extract_ingredient_filtered_data(dataframe, ingredients):
     extracted_data = dataframe.copy()
     regex_string = ''.join(map(lambda x: f'(?=.*{x})', ingredients))
     extracted_data = extracted_data[extracted_data['RecipeIngredientParts'].str.contains(
@@ -32,8 +32,8 @@ def extract_quoted_strings(s):
     return strings
 
 
-def recommend(dataframe, _input: list, ingredients=[], params={'n_neighbors': 5, 'return_distance': False}):
-    extracted_data = extract_ingredient_filtered_data(dataframe, ingredients)
+async def recommend(dataframe, _input: list, ingredients=[], params={'n_neighbors': 5, 'return_distance': False}):
+    extracted_data = await extract_ingredient_filtered_data(dataframe, ingredients)
 
     if extracted_data.shape[0] >= params['n_neighbors']:
         prep_data, scaler = scaling(extracted_data)
@@ -62,8 +62,8 @@ def output_recommended_recipes(dataframe):
     return output
 
 
-def generate(dataframe, nutrition_input: list, ingredients: list = [], params: dict = {'n_neighbors': 5, 'return_distance': False}):
-    recommendation_dataframe = recommend(
+async def generate(dataframe, nutrition_input: list, ingredients: list = [], params: dict = {'n_neighbors': 3, 'return_distance': False}):
+    recommendation_dataframe = await recommend(
         dataframe,
         nutrition_input,
         ingredients,
