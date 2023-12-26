@@ -101,9 +101,9 @@ class RepasPredictionOut(BaseModel):
     output: Optional[NutritionProgramme] = None
 
 @app.post("/Repas_suggestions/", response_model=RepasPredictionOut)
-def predict_repas(prediction_input: RepasPredictionIn):
+async def predict_repas(prediction_input: RepasPredictionIn):
     try:
-        age = prediction_input.age
+        age    = prediction_input.age
         height = prediction_input.height
         weight = prediction_input.weight
         gender = prediction_input.gender
@@ -144,7 +144,7 @@ def predict_repas(prediction_input: RepasPredictionIn):
             weight_loss_plan
         )
 
-        output = generate_repas_programme(dataset, person)
+        output = await generate_repas_programme(dataset, person)
 
         if output is None:
              raise HTTPException(status_code=404, detail="Not found")

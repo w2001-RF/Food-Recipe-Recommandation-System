@@ -47,7 +47,7 @@ async def recommend(dataframe, _input: list, ingredients=[], params={'n_neighbor
         return None
 
 
-def output_recommended_recipes(dataframe):
+async def output_recommended_recipes(dataframe):
     if dataframe is not None:
         output = dataframe.copy()
         output = output.to_dict("records")
@@ -70,6 +70,6 @@ async def generate(dataframe, nutrition_input: list, ingredients: list = [], par
         params
     )
 
-    generated_recipes = output_recommended_recipes(recommendation_dataframe)
+    generated_recipes = await output_recommended_recipes(recommendation_dataframe)
 
     return generated_recipes
