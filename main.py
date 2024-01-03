@@ -60,7 +60,8 @@ def home():
 
 @app.post("/Recipe_suggestions/", response_model=RecipePredictionOut)
 async def predict_recipes(prediction_input: RecipePredictionIn):
-    try:
+    # try:
+    if True:
         output = await generate_recipes_suggestions(
             dataset,
             prediction_input.nutrition_input,
@@ -76,8 +77,8 @@ async def predict_recipes(prediction_input: RecipePredictionIn):
             "output": output
         }
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
 class RepasPredictionIn(BaseModel):
     age: int
@@ -102,7 +103,8 @@ class RepasPredictionOut(BaseModel):
 
 @app.post("/Repas_suggestions/", response_model=RepasPredictionOut)
 async def predict_repas(prediction_input: RepasPredictionIn):
-    try:
+    # try:
+    if True:
         age    = prediction_input.age
         height = prediction_input.height
         weight = prediction_input.weight
@@ -153,6 +155,6 @@ async def predict_repas(prediction_input: RepasPredictionIn):
                 "Message": "Get recipes successfully",
                 "output": output
             }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
