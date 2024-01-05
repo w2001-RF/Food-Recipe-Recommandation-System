@@ -94,7 +94,7 @@ class NutritionProgramme(BaseModel):
     BMI: str
     BMICategory: str
     CaloriesPerDay: str
-    Repas_Programme: Dict[str, List[Recipe]]
+    Repas_Programme: Optional[List[Recipe]] = None
 
 
 class RepasPredictionOut(BaseModel):

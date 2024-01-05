@@ -16,11 +16,16 @@ nutritions_values = [
 ]
 losses = ['-0 kg/week', '-0.25 kg/week', '-0.5 kg/week', '-1 kg/week']
 
+async def generate_repas_programme(dataframe, person):
+    bmi_string, category = person.get_bmi_string_and_category()
+    maintain_calories = person.calories_calculator()
+    meals = person.meals_calories_perc.keys()
 
-async def generate_recommendations(dataframe, person):
     total_calories = Weights[person.weight_loss_plan] * \
         person.calories_calculator()
+    
     recommendations = []
+
     for meal in person.meals_calories_perc:
         meal_calories = person.meals_calories_perc[meal] * total_calories
         if meal == 'breakfast':
@@ -37,55 +42,32 @@ async def generate_recommendations(dataframe, person):
                 0, 30), rnd(0, 400), rnd(40, 75), rnd(4, 10), rnd(0, 10), rnd(30, 100)]
 
         loop = asyncio.get_event_loop()
-        recommendations_coroutine = generate(dataframe, recommended_nutrition)
+        recommendations_coroutine = generate(dataframe, recommended_nutrition, [], {'n_neighbors': 3, 'return_distance': False})
         recommended_recipes = await loop.create_task(recommendations_coroutine)
 
-        recommendations.append(recommended_recipes)
+        recommendations.extend(recommended_recipes)
 
-    return recommendations
-
-
-async def generate_repas_programme(dataframe, person):
-    bmi_string, category = person.get_bmi_string_and_category()
-    maintain_calories = person.calories_calculator()
-    meals = person.meals_calories_perc
-
-    recommendations = await generate_recommendations(dataframe, person)
-
-    if recommendations is None:
+    if recommendations is None or not any(recommendations):
         return None
+    
+    Repas_Programme = []
 
-    Repas_Programme = {}
-
-    for meal_name, recommendation in zip(meals, recommendations):
-        Repas_Programme[meal_name] = [
-            {
-                "Recipe_Id":   recipe["RecipeId"],
-                "Recipe_Name": recipe["Name"],
-                "Recipe_Image_link": recipe["Image_link"],
-                "Recipe_nutritions_values": {
-                    value: recipe[value]
-                    for value in nutritions_values
-                },
-                "RecipeIngredients": [
-                    ingredient
-                    for ingredient in recipe['RecipeIngredientParts']
-                ],
-                # "RecipeIngredientQuantities": [
-                #     quantity
-                #     for quantity in recipe['RecipeIngredientQuantities']
-                # ],
-                "RecipeInstructions": [
-                    instruction
-                    for instruction in recipe['RecipeInstructions']
-                ],
-                "CookTime": f'{recipe["CookTime"]} min',
-                "PrepTime": f'{recipe["PrepTime"]} min',
-                "TotalTime": f'{recipe["TotalTime"]} min'
-            }
-            for recipe in recommendation
-        ]
-
+    for recipe in recommendations:
+        if recipe is not None:
+            Repas_Programme.append(
+                {
+                    "Recipe_Id": recipe["RecipeId"],
+                    "Recipe_Name": recipe["Name"],
+                    "Recipe_Image_link": recipe["Image_link"],
+                    "Recipe_nutritions_values": {
+                        value: recipe[value] for value in nutritions_values
+                    },
+                    "RecipeIngredients": [ingredient for ingredient in recipe['RecipeIngredientParts']],
+                    "RecipeInstructions": [instruction for instruction in recipe['RecipeInstructions']],
+                    "CookTime": f'{recipe["CookTime"]} min',
+                    "PrepTime": f'{recipe["PrepTime"]} min',
+                    "TotalTime": f'{recipe["TotalTime"]} min'
+                })
 
     return {
         "BMI": bmi_string,
@@ -93,3 +75,4 @@ async def generate_repas_programme(dataframe, person):
         "CaloriesPerDay": f'{round(maintain_calories * Weights[person.weight_loss_plan])} Calories/day',
         "Repas_Programme": Repas_Programme
     }
+
