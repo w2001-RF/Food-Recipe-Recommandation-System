@@ -42,7 +42,7 @@ async def generate_repas_programme(dataframe, person):
                 0, 30), rnd(0, 400), rnd(40, 75), rnd(4, 10), rnd(0, 10), rnd(30, 100)]
 
         loop = asyncio.get_event_loop()
-        recommendations_coroutine = generate(dataframe, recommended_nutrition, [], {'n_neighbors': 3, 'return_distance': False})
+        recommendations_coroutine = generate(dataframe, recommended_nutrition, [], {'n_neighbors': 2, 'return_distance': False})
         recommended_recipes = await loop.create_task(recommendations_coroutine)
 
         recommendations.extend(recommended_recipes)
